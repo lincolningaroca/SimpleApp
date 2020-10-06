@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>rpt/Reporteusuarios.lrxml</file>
+    </qresource>
+</RCC>
