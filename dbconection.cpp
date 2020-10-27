@@ -1,6 +1,7 @@
 #include "dbconection.h"
 #include <QtCore>
 #include <QObject>
+
 DbConection::DbConection()
 {
 

@@ -6,7 +6,7 @@ NewUserDialog::NewUserDialog(frmMode mode, QWidget *parent) :
   QDialog(parent), ui(new Ui::NewUserDialog), _mode(mode)
 {
   ui->setupUi(this);
-  setWindowFlags(Qt::Dialog|Qt::MSWindowsFixedSizeDialogHint);
+  setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
   showMode();
   setFieldValidate();
   ui->pushButton->setShortcut(Qt::CTRL+Qt::Key_D);
@@ -68,14 +68,14 @@ bool NewUserDialog::validate()
   //validar que la informacion ingresada es correcta
   if(ui->leDni->text().count()!=8)
     {
-      QMessageBox::warning(this,qApp->applicationName(),tr("Un DNI debe contener 8 dígitos."));
+      QMessageBox::warning(this,qApp->applicationName(),tr("Un Nro. de DNI consta de 8 dígitos."));
       ui->leDni->selectAll();
       ui->leDni->setFocus(Qt::OtherFocusReason);
       return false;
     }
   if(!regEmailVal.exactMatch(ui->leEmail->text()))
     {
-      QMessageBox::warning(this,qApp->applicationName(),tr("Dirección de correo inválido."));
+      QMessageBox::warning(this,qApp->applicationName(),tr("La dirección de correo no es válida."));
       ui->leEmail->selectAll();
       ui->leEmail->setFocus(Qt::OtherFocusReason);
       return false;
@@ -102,12 +102,12 @@ bool NewUserDialog::validate()
 void NewUserDialog::setFieldValidate()
 {
   //validar numero de dni
-  QRegExp regDniVal("^[0-9]{8}$");
+  QRegExp regDniVal("^\\d{8}$");
   QRegExpValidator *valDni=new QRegExpValidator(regDniVal);
   ui->leDni->setValidator(valDni);
 
   //validar nombres
-  QRegExp regNomVal("^[a-zA_Z\\s]+$");
+  QRegExp regNomVal("^([a-zA-ZñÑ]\\s?)+\\S$");
   QRegExpValidator *valNom=new QRegExpValidator(regNomVal);
   ui->leNombres->setValidator(valNom);
 

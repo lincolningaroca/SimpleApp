@@ -5,13 +5,13 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QSqlTableModel>
-#include "newuserdialog.h"
-#include "dbconection.h"
-#include "listauserdialog.h"
 #include <QSortFilterProxyModel>
 #include <QFile>
 #include <QStyleFactory>
 #include <LimeReport>
+#include "newuserdialog.h"
+#include "dbconection.h"
+#include "listauserdialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -24,6 +24,10 @@ class Widget : public QWidget
 public:
   Widget(QWidget *parent = nullptr);
   ~Widget();
+  enum optReport{
+    RPT_PREVIEW,
+    RPT_PRINT
+  };
 
 private slots:
   void on_btnNuevo_clicked();
@@ -33,8 +37,10 @@ private slots:
   void on_lineEdit_textChanged(const QString &arg1);
   void on_comboBox_currentIndexChanged(int index);
   void on_btnTheme_clicked();
-
   void on_pushButton_2_clicked();
+  void on_pushButton_3_clicked();
+  //funciones personalizadas
+  void loadReport(QString rptName, optReport opt);
 
 private:
   Ui::Widget *ui;
@@ -45,6 +51,7 @@ private:
   LimeReport::ReportEngine *mReport;
 
   void loadData();
+
 
 
 };

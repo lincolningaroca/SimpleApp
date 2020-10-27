@@ -5,7 +5,7 @@ ListaUserDialog::ListaUserDialog(QWidget *parent) :
   QDialog(parent), ui(new Ui::ListaUserDialog)
 {
   ui->setupUi(this);
-  setWindowFlags(Qt::Dialog|Qt::MSWindowsFixedSizeDialogHint);
+  setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
   setupTable();
   setFieldValidate();
   ui->txtDni->addAction(QIcon(":/images/dni1.png"),QLineEdit::LeadingPosition);

@@ -1,11 +1,14 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include <QFile>
+#include <QPrinter>
+#include <QPrintDialog>
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent), ui(new Ui::Widget)
 {
   ui->setupUi(this);
+
   setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
   loadData();
 
@@ -15,14 +18,13 @@ Widget::Widget(QWidget *parent)
   ui->btnPorLotes->setShortcut(Qt::Key_V);
   //  ui->lineEdit->setInputMask("A-99999999");
   ui->btnTheme->setCheckable(true);
-//  ui->pushButton_2->setEnabled(false);
+  //  ui->pushButton_2->setEnabled(false);
 }
 
 Widget::~Widget()
 {
   delete ui;
 }
-
 
 void Widget::on_btnNuevo_clicked()
 {
@@ -54,6 +56,10 @@ void Widget::on_btnNuevo_clicked()
 
 void Widget::on_pushButton_clicked()
 {
+  if(ui->tblUsuarios->currentIndex().row()==-1){
+      QMessageBox::warning(this,qApp->applicationName(),"Seleccione un registro.");
+      return;
+    }
   NewUserDialog *editUser=new NewUserDialog(NewUserDialog::editMode,this);
   QList<QVariant> data;
   QModelIndex index=ui->tblUsuarios->currentIndex();
@@ -145,14 +151,14 @@ void Widget::on_comboBox_currentIndexChanged(int index)
     case 0:
     case 1:
       {
-        QRegExp regDniVal("^[0-9]{8}$");
+        QRegExp regDniVal("^\\d{8}$");
         QRegExpValidator *valDni=new QRegExpValidator(regDniVal);
         ui->lineEdit->setValidator(valDni);
       }
       break;
     case 2:
       {
-        QRegExp regNomVal("^[a-zA_Z\\s]+$");
+        QRegExp regNomVal("^([a-zA-ZñÑ]\\s?)+\\S$");
         QRegExpValidator *valNom=new QRegExpValidator(regNomVal);
         ui->lineEdit->setValidator(valNom);
       }
@@ -189,8 +195,6 @@ void Widget::loadData()
   proxyModel->setFilterKeyColumn(2);
   //  connect(ui->lineEdit,&QLineEdit::textChanged,proxyModel,
   //          &QSortFilterProxyModel::setFilterWildcard);
-
-
 
   ui->tblUsuarios->setModel(proxyModel);
   ui->tblUsuarios->selectRow(0);
@@ -247,15 +251,48 @@ void Widget::on_btnTheme_clicked()
 
 void Widget::on_pushButton_2_clicked()
 {
-  QFile fileName(":/rpt/Reporteusuarios.lrxml");
+  loadReport(QString(":/rpt/Reporteusuarios.lrxml"),optReport::RPT_PREVIEW);
+}
+
+void Widget::on_pushButton_3_clicked()
+{
+  loadReport(QString(":/rpt/Reporteusuarios.lrxml"),optReport::RPT_PRINT);
+}
+
+void Widget::loadReport(QString rptName, optReport opt)
+{
+  QFile fileName(rptName);
   if(!fileName.open(QIODevice::ReadOnly|QIODevice::Text)){
       QMessageBox::critical(this,qApp->applicationName(),
                             QString("Error al abrir el reporte.\n").append(
                               fileName.errorString()));
       return;
     }
+  //  return fileName.fileName();
   mReport=new LimeReport::ReportEngine(this);
   mReport->dataManager()->setReportVariable("DATABASE",db.strConexion());
-  mReport->loadFromFile(fileName.fileName());
-  mReport->previewReport();
+  if(!mReport->loadFromFile(fileName.fileName()))
+    {
+      QMessageBox::critical(this,qApp->applicationName(),
+                            QString("Error al cargar el reporte.\n").append(
+                              mReport->lastError()));
+      return;
+    }
+
+  if(opt==optReport::RPT_PREVIEW)
+    mReport->previewReport();
+  else{
+      QPrinter *printer;
+      QPrintDialog pd(this);
+      if(pd.exec()==QDialog::Rejected)
+        return;
+      printer=pd.printer();
+      if(!mReport->printReport(printer))
+        {
+          QMessageBox::critical(this,qApp->applicationName(),
+                                tr("Ocurrio un error al imprimir el reporte!\n").append(
+                                  mReport->lastError()));
+          return;
+        }
+    }
 }

@@ -361,7 +361,7 @@
           <objectName Type="QString"></objectName>
           <name Type="QString">list</name>
           <driver Type="QString">QSQLITE</driver>
-          <databaseName Type="QString">D:/QtProjects/QtProgram/db/dbejemplo.db</databaseName>
+          <databaseName Type="QString">$V{DATABASE}</databaseName>
           <userName Type="QString"></userName>
           <password Value="" Type="QString"/>
           <host Type="QString"></host>
